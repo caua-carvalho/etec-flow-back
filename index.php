@@ -1,3 +1,3 @@
 <?php
-echo 'hello world! caua 1234';
+echo 'hello world!';
 ?>

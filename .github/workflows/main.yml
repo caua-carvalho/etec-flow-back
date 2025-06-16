@@ -2,23 +2,34 @@ name: Deploy Back-end via FTP
 
 on:
   push:
+    branches:
+      - main                       # 🔒 Deploy apenas da branch principal
     paths:
-      - 'back-end/**'
-  workflow_dispatch:
+      - '**/*'                     # Monitorar todas as alterações
+  workflow_dispatch:              # Permite disparo manual no GitHub
 
 jobs:
   deploy:
     name: 🚀 Deploy Back-end
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
 
-      - name: Deploy via FTP
+    steps:
+      - name: ✅ Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0           # Para histórico completo, caso necessário
+
+      - name: ⚙️ Prepare artifacts
+        run: |
+          # Aqui você pode inserir comandos de build, testes ou lint
+          echo "Nenhuma etapa de build definida – ajustável conforme stack."
+
+      - name: 📂 Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
         with:
           server:    ${{ secrets.FTP_HOST }}
           username:  ${{ secrets.FTP_USERNAME }}
           password:  ${{ secrets.FTP_PASSWORD }}
-          local-dir: /
+          local-dir: ./               # Evita subir arquivos do root do runner
           server-dir: /htdocs/
+          clean: true                 # Remove arquivos obsoletos do servidor

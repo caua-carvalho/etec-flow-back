@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../config/conn.php';
 
 $professor_id = isset($_GET['professor_id']) ? (int) $_GET['professor_id'] : 0;
 $id_turma      = isset($_GET['id_turma'])      ? (int) $_GET['id_turma']      : 0;

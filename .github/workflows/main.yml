@@ -32,4 +32,3 @@ jobs:
           password:  ${{ secrets.FTP_PASSWORD }}
           local-dir: ./               # Evita subir arquivos do root do runner
           server-dir: /htdocs/
-          clean: true                 # Remove arquivos obsoletos do servidor

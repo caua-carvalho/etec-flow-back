@@ -18,9 +18,10 @@ if (!$professor_id) {
 // busca escolas + turmas onde o professor leciona
 $sql = "
   SELECT
-    e.nome   AS escola,
-    t.codigo AS turma,
-    t.tipo   AS tipo
+    e.nome         AS escola,
+    t.id_turma     AS id,
+    t.codigo       AS codigo,
+    t.tipo         AS tipo
   FROM grade_aulas g
   JOIN turmas   t ON t.id_turma   = g.id_turma
   JOIN cursos   c ON c.id_curso   = t.id_curso
@@ -48,35 +49,31 @@ $rows   = $result->fetch_all(MYSQLI_ASSOC);
 
 $map = [];
 
-// 1) Agrupamento “end-to-end”
 foreach ($rows as $r) {
     $esc = $r['escola'];
 
-    // Garantir que cada escola tenha ‘turmas’ e ‘tipos’
     if (!isset($map[$esc])) {
         $map[$esc] = [
-            'turmas' => [],
-            'tipos'  => []
+            'turmas' => []
         ];
     }
 
-    // Populando de forma unívoca
-    $map[$esc]['turmas'][] = $r['turma'];
-    $map[$esc]['tipos'][]  = $r['tipo'];
-}
-
-// 2) Sprint final: montar payload otimizado
-$response = [];
-foreach ($map as $escola => $data) {
-    // Eliminando duplicados — low‑hanging fruit de performance
-    $uniqueTurmas = array_values(array_unique($data['turmas']));
-    $uniqueTipos  = array_values(array_unique($data['tipos']));
-
-    $response[] = [
-        'nome'   => $escola,
-        'turmas' => $uniqueTurmas,
-        'tipos'  => $uniqueTipos,
+    // Popula um objeto por turma
+    $map[$esc]['turmas'][] = [
+        'id'     => (int)$r['id'],
+        'codigo' => $r['codigo'],
+        'tipo'   => $r['tipo']
     ];
 }
 
-echo json_encode($response, JSON_UNESCAPED_UNICODE);
+
+$response = [];
+foreach ($map as $escola => $data) {
+    // Se quiser deduplicar, use uma abordagem custom (por padrão GROUP BY já evita duplicados)
+    $response[] = [
+        'nome'   => $escola,
+        'turmas' => $data['turmas']
+    ];
+}
+
+echo json_encode($response, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);

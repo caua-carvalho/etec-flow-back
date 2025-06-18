@@ -1,17 +1,14 @@
 <?php
-// grade_turma.php
-// Retorna a grade de uma turma (todas as divisões) para um professor
+// schedule.php
 header('Content-Type: application/json; charset=UTF-8');
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 require_once __DIR__ . '/../../config/conn.php';
 
-// Parâmetros esperados via query string
 $professor_id = isset($_GET['professor_id']) ? (int) $_GET['professor_id'] : 0;
 $turma_id     = isset($_GET['turma_id'])     ? (int) $_GET['turma_id']     : 0;
 
-// Validação básica
 if (!$professor_id || !$turma_id) {
     http_response_code(400);
     exit(json_encode([
@@ -19,7 +16,6 @@ if (!$professor_id || !$turma_id) {
     ], JSON_UNESCAPED_UNICODE));
 }
 
-// Query que traz todas as divisões ('A', 'B', ...) da turma
 $sql = "
 SELECT
     g.id_grade,
@@ -55,5 +51,4 @@ $stmt->execute();
 $result = $stmt->get_result();
 $data   = $result->fetch_all(MYSQLI_ASSOC);
 
-// Retorna o JSON com todas as linhas (uma por divisão/hora)
 echo json_encode($data, JSON_UNESCAPED_UNICODE);

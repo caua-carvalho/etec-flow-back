@@ -5,7 +5,7 @@
 header('Content-Type: application/json; charset=UTF-8');
 ini_set('display_errors', 0);
 
-require_once __DIR__ . 'config/conn.php';
+require_once __DIR__ . '/../config/conn.php';
 
 $professor_id = isset($_GET['professor_id']) ? (int) $_GET['professor_id'] : 0;
 if (!$professor_id) {

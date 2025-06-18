@@ -15,61 +15,41 @@ if (!$professor_id) {
     exit;
 }
 
-// busca escolas + turmas onde o professor leciona
+// monta SQL para turmas agrupadas por escola
 $sql = "
-  SELECT
-    e.nome         AS escola,
-    t.id_turma     AS id,
-    t.codigo       AS codigo,
-    t.tipo         AS tipo
-  FROM grade_aulas g
-  JOIN turmas   t ON t.id_turma   = g.id_turma
-  JOIN cursos   c ON c.id_curso   = t.id_curso
-  JOIN escolas  e ON e.id_escola  = c.id_escola
-  WHERE g.id_professor = ?
-  GROUP BY e.id_escola, t.id_turma
-  ORDER BY e.nome, t.codigo
+SELECT
+    e.nome          AS escola,
+    t.id_turma      AS id,
+    t.codigo        AS codigo,
+    dv.nome_divisao AS divisao
+FROM grade_aulas g
+JOIN divisoes   dv ON dv.id_divisao   = g.id_divisao
+JOIN turmas     t  ON t.id_turma       = dv.id_turma
+JOIN cursos     c  ON c.id_curso       = t.id_curso
+JOIN escolas    e  ON e.id_escola      = c.id_escola
+WHERE g.id_professor = ?
+GROUP BY e.id_escola, t.id_turma, dv.id_divisao
+ORDER BY e.nome, t.codigo, dv.nome_divisao
 ";
 
 $stmt = $mysqli->prepare($sql);
-if (! $stmt) {
-    http_response_code(500);
-    echo json_encode([
-      'error'       => 'Erro na preparação da query',
-      'mysql_error' => $mysqli->error
-    ], JSON_UNESCAPED_UNICODE);
-    exit;
-}
-
 $stmt->bind_param('i', $professor_id);
 $stmt->execute();
 
 $result = $stmt->get_result();
-$rows   = $result->fetch_all(MYSQLI_ASSOC);
 
+// agrupa turmas por escola
 $map = [];
-
-foreach ($rows as $r) {
-    $esc = $r['escola'];
-
-    if (!isset($map[$esc])) {
-        $map[$esc] = [
-            'turmas' => []
-        ];
-    }
-
-    // Popula um objeto por turma
-    $map[$esc]['turmas'][] = [
-        'id'     => (int)$r['id'],
-        'codigo' => $r['codigo'],
-        'tipo'   => $r['tipo']
+while ($r = $result->fetch_assoc()) {
+    $map[$r['escola']]['turmas'][] = [
+        'id'      => $r['id'],
+        'codigo'  => $r['codigo'],
+        'divisao' => $r['divisao']
     ];
 }
 
-
 $response = [];
 foreach ($map as $escola => $data) {
-    // Se quiser deduplicar, use uma abordagem custom (por padrão GROUP BY já evita duplicados)
     $response[] = [
         'nome'   => $escola,
         'turmas' => $data['turmas']

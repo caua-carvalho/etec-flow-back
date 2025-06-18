@@ -19,19 +19,21 @@ if (!$professor_id) {
 }
 
 // monta SQL com joins na nova modelagem
+
 $sql = "
 SELECT
     g.id_grade,
     dv.id_divisao,
     t.id_turma,
-    t.codigo       AS turma,
-    dv.nome_divisao AS divisao,
-    e.nome         AS escola,
+    t.codigo         AS turma,
+    dv.nome_divisao  AS divisao,
+    e.nome           AS escola,
     g.dia_semana,
     g.horario_inicio,
     g.horario_fim,
-    ds.nome        AS disciplina,
-    g.sala         AS sala,
+    ds.nome          AS disciplina,
+    g.sala           AS sala,
+    p.nome           AS professor,
     g.cor_evento
 FROM grade_aulas g
 JOIN divisoes    dv ON dv.id_divisao   = g.id_divisao
@@ -40,7 +42,10 @@ JOIN cursos      c  ON c.id_curso       = t.id_curso
 JOIN escolas     e  ON e.id_escola      = c.id_escola
 JOIN disciplinas ds ON ds.id_disciplina = g.id_disciplina
 JOIN professores p  ON p.id_professor   = g.id_professor
-WHERE p.id_professor = ?";
+WHERE p.id_professor = ?
+  AND t.id_turma     = ?
+ORDER BY t.codigo, dv.nome_divisao, g.dia_semana, g.horario_inicio
+";
 
 // filtro opcional por turma
 if ($turma_id) {

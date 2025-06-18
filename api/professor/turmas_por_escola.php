@@ -20,7 +20,7 @@ $sql = "
   SELECT
     e.nome   AS escola,
     t.codigo AS turma,
-    t.tipo   AS tipo,
+    t.tipo   AS tipo
   FROM grade_aulas g
   JOIN turmas   t ON t.id_turma   = g.id_turma
   JOIN cursos   c ON c.id_curso   = t.id_curso

@@ -46,24 +46,36 @@ $stmt->execute();
 $result = $stmt->get_result();
 $rows   = $result->fetch_all(MYSQLI_ASSOC);
 
-// agrupa por escola
 $map = [];
+
+// 1) Agrupamento “end-to-end”
 foreach ($rows as $r) {
     $esc = $r['escola'];
+
+    // Garantir que cada escola tenha ‘turmas’ e ‘tipos’
     if (!isset($map[$esc])) {
-        $map[$esc] = [];
+        $map[$esc] = [
+            'turmas' => [],
+            'tipos'  => []
+        ];
     }
-    $map[$esc][] = $r['turma'];
-    $map[$esc][] = $r['tipo'];
+
+    // Populando de forma unívoca
+    $map[$esc]['turmas'][] = $r['turma'];
+    $map[$esc]['tipos'][]  = $r['tipo'];
 }
 
-// monta resposta no formato desejado
+// 2) Sprint final: montar payload otimizado
 $response = [];
-foreach ($map as $escola => $turmas) {
+foreach ($map as $escola => $data) {
+    // Eliminando duplicados — low‑hanging fruit de performance
+    $uniqueTurmas = array_values(array_unique($data['turmas']));
+    $uniqueTipos  = array_values(array_unique($data['tipos']));
+
     $response[] = [
         'nome'   => $escola,
-        'turmas' => array_values($turmas),
-        'tipo'   => array_values( $tipo),
+        'turmas' => $uniqueTurmas,
+        'tipos'  => $uniqueTipos,
     ];
 }
 

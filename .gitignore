@@ -1,2 +1,2 @@
 #ignora o banco de dados e nao manda para o servidor
-*.sql
+/sql

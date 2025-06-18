@@ -2,10 +2,10 @@
 // config/db.php
 header('Content-Type: application/json; charset=UTF-8');
 
-$DB_HOST = 'localhost';
-$DB_USER = 'seu_usuario';
-$DB_PASS = 'sua_senha';
-$DB_NAME = 'seu_banco';
+$DB_HOST = 'sql113.infinityfree.com';
+$DB_USER = 'if0_39241532';
+$DB_PASS = 'vYm6EJTK2v';
+$DB_NAME = 'if0_39241532_etec_flow';
 
 $mysqli = new mysqli($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME);
 if ($mysqli->connect_errno) {

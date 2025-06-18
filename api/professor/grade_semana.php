@@ -19,6 +19,7 @@ SELECT
     g.id_grade,
     g.id_turma,
     t.codigo       AS turma,
+    e.nome         AS escola,        -- <-- adiciona aqui
     g.dia_semana,
     g.horario_inicio,
     g.horario_fim,
@@ -27,6 +28,8 @@ SELECT
     g.cor_evento
 FROM grade_aulas g
 JOIN turmas      t ON t.id_turma     = g.id_turma
+JOIN cursos      c ON c.id_curso     = t.id_curso
+JOIN escolas     e ON e.id_escola    = c.id_escola
 JOIN disciplinas d ON d.id_disciplina = g.id_disciplina
 WHERE g.id_professor = ?
 ORDER BY g.dia_semana, g.horario_inicio

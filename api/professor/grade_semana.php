@@ -24,6 +24,7 @@ SELECT
     g.id_grade,
     g.id_turma,
     t.codigo      AS turma,
+    t.divisao     AS divisao,
     e.nome        AS escola,      -- nome da escola
     g.dia_semana,
     g.horario_inicio,

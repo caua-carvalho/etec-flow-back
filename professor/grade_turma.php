@@ -29,7 +29,9 @@ ORDER BY g.dia_semana, g.horario_inicio
 
 $stmt = $mysqli->prepare($sql);
 $stmt->bind_param('ii', $professor_id, $id_turma);
-$stmt->execute();
+if($stmt->execute() === false){
+  http_response_code(400);
+}
 $result = $stmt->get_result();
 $data = $result->fetch_all(MYSQLI_ASSOC);
 echo json_encode($data);

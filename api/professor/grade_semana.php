@@ -6,7 +6,7 @@ header('Content-Type: application/json; charset=UTF-8');
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-require_once __DIR__ . '/../config/conn.php';
+require_once __DIR__ . '/../../config/conn.php';
 
 // pega parâmetros
 $professor_id = isset($_GET['professor_id']) ? (int) $_GET['professor_id'] : 0;

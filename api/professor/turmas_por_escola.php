@@ -54,6 +54,7 @@ foreach ($rows as $r) {
         $map[$esc] = [];
     }
     $map[$esc][] = $r['turma'];
+    $map[$esc][] = $r['tipo'];
 }
 
 // monta resposta no formato desejado
@@ -62,6 +63,7 @@ foreach ($map as $escola => $turmas) {
     $response[] = [
         'nome'   => $escola,
         'turmas' => array_values($turmas),
+        'tipo'   => array_values( $tipo),
     ];
 }
 

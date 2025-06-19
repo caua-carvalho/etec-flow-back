@@ -9,10 +9,10 @@ require_once __DIR__ . '/../../config/conn.php';
 $professor_id = isset($_GET['professor_id']) ? (int) $_GET['professor_id'] : 0;
 $turma_id     = isset($_GET['turma_id'])     ? (int) $_GET['turma_id']     : 0;
 
-if (!$professor_id || !$turma_id) {
+if (!$professor_id) {
     http_response_code(400);
     exit(json_encode([
-        'error' => 'Faltando parâmetros: professor_id ou turma_id'
+        'error' => 'Faltando parâmetros: professor_id'
     ], JSON_UNESCAPED_UNICODE));
 }
 

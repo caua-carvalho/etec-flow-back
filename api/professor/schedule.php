@@ -46,7 +46,7 @@ if(!$turma_id) {
 
 
     $stmt = $mysqli->prepare($sql);
-    $stmt->bind_param('i', $professor_id, $turma_id);
+    $stmt->bind_param('i', $professor_id);
 } else {
     $sql = "
     SELECT

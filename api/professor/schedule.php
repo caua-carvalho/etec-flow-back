@@ -16,6 +16,7 @@ if (!$professor_id) {
 $sql = "
 SELECT
     g.id_grade,
+    g.dia_semana,   
     t.id_turma,
     t.codigo           AS turma,
     dv.id_divisao,

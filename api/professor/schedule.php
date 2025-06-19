@@ -43,6 +43,10 @@ if(!$turma_id) {
         g.dia_semana,
         g.horario_inicio
     ";
+
+
+    $stmt = $mysqli->prepare($sql);
+    $stmt->bind_param('i', $professor_id, $turma_id);
 } else {
     $sql = "
     SELECT
@@ -71,10 +75,12 @@ if(!$turma_id) {
         g.dia_semana,
         g.horario_inicio
     ";
+
+
+    $stmt = $mysqli->prepare($sql);
+    $stmt->bind_param('ii', $professor_id, $turma_id);
 }
 
-$stmt = $mysqli->prepare($sql);
-$stmt->bind_param('ii', $professor_id, $turma_id);
 $stmt->execute();
 
 $result = $stmt->get_result();

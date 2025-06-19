@@ -26,6 +26,7 @@ SELECT
     ha.horario_inicio,
     ha.horario_fim,
     ds.nome            AS disciplina,
+    ds.abreviacao       AS disciplina_abreviada,
     p.nome             AS professor,
     g.sala             AS sala,
     g.cor_evento

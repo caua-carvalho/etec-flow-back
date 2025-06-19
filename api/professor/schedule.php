@@ -16,33 +16,62 @@ if (!$professor_id) {
     ], JSON_UNESCAPED_UNICODE));
 }
 
-$sql = "
-SELECT
-    g.id_grade,
-    t.id_turma,
-    t.codigo           AS turma,
-    dv.id_divisao,
-    dv.nome_divisao    AS divisao,
-    ds.nome            AS disciplina,
-    p.nome             AS professor,
-    g.sala             AS sala,
-    g.dia_semana,
-    g.horario_inicio,
-    g.horario_fim,
-    g.cor_evento
-FROM grade_aulas g
-JOIN divisoes    dv ON dv.id_divisao   = g.id_divisao
-JOIN turmas      t  ON t.id_turma       = dv.id_turma
-JOIN disciplinas ds ON ds.id_disciplina = g.id_disciplina
-JOIN professores p  ON p.id_professor   = g.id_professor
-WHERE p.id_professor = ?
-  AND t.id_turma     = ?
-ORDER BY
-    t.codigo,
-    dv.nome_divisao,
-    g.dia_semana,
-    g.horario_inicio
-";
+if(!$turma_id) {
+    $sql = "
+    SELECT
+        g.id_grade,
+        t.id_turma,
+        t.codigo           AS turma,
+        dv.id_divisao,
+        dv.nome_divisao    AS divisao,
+        ds.nome            AS disciplina,
+        p.nome             AS professor,
+        g.sala             AS sala,
+        g.dia_semana,
+        g.horario_inicio,
+        g.horario_fim,
+        g.cor_evento
+    FROM grade_aulas g
+    JOIN divisoes    dv ON dv.id_divisao   = g.id_divisao
+    JOIN turmas      t  ON t.id_turma       = dv.id_turma
+    JOIN disciplinas ds ON ds.id_disciplina = g.id_disciplina
+    JOIN professores p  ON p.id_professor   = g.id_professor
+    WHERE p.id_professor = ?
+    ORDER BY
+        t.codigo,
+        dv.nome_divisao,
+        g.dia_semana,
+        g.horario_inicio
+    ";
+} else {
+    $sql = "
+    SELECT
+        g.id_grade,
+        t.id_turma,
+        t.codigo           AS turma,
+        dv.id_divisao,
+        dv.nome_divisao    AS divisao,
+        ds.nome            AS disciplina,
+        p.nome             AS professor,
+        g.sala             AS sala,
+        g.dia_semana,
+        g.horario_inicio,
+        g.horario_fim,
+        g.cor_evento
+    FROM grade_aulas g
+    JOIN divisoes    dv ON dv.id_divisao   = g.id_divisao
+    JOIN turmas      t  ON t.id_turma       = dv.id_turma
+    JOIN disciplinas ds ON ds.id_disciplina = g.id_disciplina
+    JOIN professores p  ON p.id_professor   = g.id_professor
+    WHERE p.id_professor = ?
+    AND t.id_turma     = ?
+    ORDER BY
+        t.codigo,
+        dv.nome_divisao,
+        g.dia_semana,
+        g.horario_inicio
+    ";
+}
 
 $stmt = $mysqli->prepare($sql);
 $stmt->bind_param('ii', $professor_id, $turma_id);

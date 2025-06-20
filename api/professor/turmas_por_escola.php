@@ -44,7 +44,7 @@ while ($row = $res->fetch_assoc()) {
         ];
     }
     // concatena código + divisão (A, B…)
-    $codigo = $row['codigo_turma'] . $row['nome_divisao'];
+    $codigo = $row['codigo_turma'];
     $escolas[$idEscola]['turmas'][] = [
         'id'     => (int)$row['id_turma'],
         'codigo' => $codigo

@@ -12,20 +12,20 @@ if (!$professor_id) {
 }
 
 $sql = "
-SELECT
-    e.nome          AS escola,
-    t.id_turma      AS id,
-    t.codigo        AS codigo,
-    dv.nome_divisao AS divisao
-FROM grade_aulas g
-JOIN divisoes   dv ON dv.id_divisao   = g.id_divisao
-JOIN turmas     t  ON t.id_turma       = dv.id_turma
-JOIN cursos     c  ON c.id_curso       = t.id_curso
-JOIN escolas    e  ON e.id_escola      = c.id_escola
-JOIN professores p  ON p.id_professor   = g.id_professor
-WHERE p.id_professor = ?
-GROUP BY e.id_escola, t.id_turma, dv.id_divisao
-ORDER BY e.nome, t.codigo, dv.nome_divisao
+    SELECT
+    e.id_escola,
+    e.nome      AS nome_escola,
+    t.id_turma,
+    t.codigo    AS codigo_turma,
+    dv.nome_divisao
+    FROM grade_aulas ga
+    JOIN divisoes dv    ON ga.id_divisao    = dv.id_divisao
+    JOIN turmas t       ON dv.id_turma      = t.id_turma
+    JOIN cursos c       ON t.id_curso       = c.id_curso
+    JOIN escolas e      ON c.id_escola      = e.id_escola
+    WHERE ga.id_professor = :professor_id
+    GROUP BY e.id_escola, t.id_turma
+    ORDER BY e.nome, t.codigo;
 ";
 
 $stmt = $mysqli->prepare($sql);
@@ -33,20 +33,23 @@ $stmt->bind_param('i', $professor_id);
 $stmt->execute();
 $result = $stmt->get_result();
 // agrupa turmas por escola
-$map = [];
-while ($r = $result->fetch_assoc()) {
-    $map[$r['escola']]['turmas'][] = [
-        'id'      => $r['id'],
-        'codigo'  => $r['codigo'],
-        'divisao' => $r['divisao']
+$escolas = [];
+foreach ($rows as $r) {
+    $idEscola = $r['id_escola'];
+    if (!isset($escolas[$idEscola])) {
+        $escolas[$idEscola] = [
+            'nome'   => $r['nome_escola'],
+            'turmas' => []
+        ];
+    }
+    // monta o código da turma (você pode remover a divisão se não quiser)
+    $codigo = $r['codigo_turma'] . $r['nome_divisao'];
+
+    $escolas[$idEscola]['turmas'][] = [
+        'id'     => (int) $r['id_turma'],
+        'codigo' => $codigo
     ];
 }
 
-$response = [];
-foreach ($map as $escola => $data) {
-    $response[] = [
-        'nome'   => $escola,
-        'turmas' => $data['turmas']
-    ];
-}
-echo json_encode($response, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
+// 5) Retorna o JSON agrupado
+echo json_encode(array_values($escolas), JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);

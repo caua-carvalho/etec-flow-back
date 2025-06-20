@@ -29,7 +29,7 @@ $sql = "
 ";
 
 $stmt = $mysqli->prepare($sql);
-$stmt->bind_param('i', $professorId);
+$stmt->bind_param('i', $professor_id);
 $stmt->execute();
 $res = $stmt->get_result();
 

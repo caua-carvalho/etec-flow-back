@@ -23,7 +23,7 @@ $sql = "
     JOIN turmas t       ON dv.id_turma      = t.id_turma
     JOIN cursos c       ON t.id_curso       = c.id_curso
     JOIN escolas e      ON c.id_escola      = e.id_escola
-    WHERE ga.id_professor = :professor_id
+    WHERE ga.id_professor = ?
     GROUP BY e.id_escola, t.id_turma
     ORDER BY e.nome, t.codigo;
 ";

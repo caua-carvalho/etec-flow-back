@@ -17,6 +17,8 @@ $sql = "
 SELECT
     g.id_grade,
     g.dia_semana,
+    e.id_escola,
+    e.nome                 AS escola,
     t.id_turma,
     t.codigo               AS turma,
     dv.id_divisao,
@@ -33,12 +35,14 @@ FROM grade_aulas g
 JOIN divisoes    dv ON dv.id_divisao      = g.id_divisao
 JOIN turmas      t  ON t.id_turma         = dv.id_turma
 JOIN cursos      c  ON c.id_curso         = t.id_curso
+JOIN escolas     e  ON e.id_escola        = c.id_escola
 JOIN horario_tipo ht 
      ON ht.id_tipo_horario = c.id_tipo_horario
     AND ht.posicao         = g.posicao_aula
 JOIN disciplinas ds ON ds.id_disciplina   = g.id_disciplina
 JOIN professores p  ON p.id_professor     = g.id_professor
-WHERE p.id_professor = ?";
+WHERE p.id_professor = ?
+";
 
 if ($turma_id) {
     $sql .= " AND t.id_turma = ?";

@@ -1,5 +1,9 @@
 <?php
-// grade_turma.php
+// turmas.php
+// Antes usava g.horario_inicio/fim; agora puxa de horario_tipo via posicao_aula
+header('Content-Type: application/json; charset=UTF-8');
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 require_once __DIR__ . '/../../config/conn.php';
 
 $professor_id = isset($_GET['professor_id']) ? (int) $_GET['professor_id'] : 0;
@@ -13,22 +17,27 @@ $sql = "
 SELECT
     g.id_grade,
     g.dia_semana,
-    g.horario_inicio,
-    g.horario_fim,
-    ds.nome          AS disciplina,
-    dv.nome_divisao  AS divisao,
-    t.codigo         AS turma,
-    g.sala           AS sala,
-    p.nome           AS professor,
+    g.posicao_aula         AS indice,
+    ht.horario_inicio,
+    ht.horario_fim,
+    ds.nome                 AS disciplina,
+    dv.nome_divisao         AS divisao,
+    t.codigo                AS turma,
+    g.sala                  AS sala,
+    p.nome                  AS professor,
     g.cor_evento
 FROM grade_aulas g
-JOIN divisoes   dv ON dv.id_divisao   = g.id_divisao
-JOIN turmas     t  ON t.id_turma       = dv.id_turma
-JOIN disciplinas ds ON ds.id_disciplina = g.id_disciplina
-JOIN professores p  ON p.id_professor   = g.id_professor
+JOIN divisoes   dv ON dv.id_divisao      = g.id_divisao
+JOIN turmas     t  ON t.id_turma         = dv.id_turma
+JOIN cursos     c  ON c.id_curso         = t.id_curso
+JOIN horario_tipo ht 
+     ON ht.id_tipo_horario = c.id_tipo_horario
+    AND ht.posicao         = g.posicao_aula
+JOIN disciplinas ds ON ds.id_disciplina   = g.id_disciplina
+JOIN professores p  ON p.id_professor     = g.id_professor
 WHERE g.id_professor = ?
   AND dv.id_turma     = ?
-ORDER BY g.dia_semana, g.horario_inicio
+ORDER BY g.dia_semana, ht.posicao
 ";
 
 $stmt = $mysqli->prepare($sql);

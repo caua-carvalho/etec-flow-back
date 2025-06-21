@@ -15,31 +15,45 @@ if (!$turma_id) {
 
 $sql = "
 SELECT
-    g.id_grade,
-    g.dia_semana,
-    t.id_turma,
-    t.codigo            AS turma,
-    dv.id_divisao,
-    dv.nome_divisao     AS divisao,
-    g.posicao_aula      AS indice,
+    ht.posicao         AS indice,
     ht.horario_inicio,
     ht.horario_fim,
+    t.id_turma,
+    t.codigo           AS turma,
+    dv.id_divisao,
+    dv.nome_divisao    AS divisao,
+    g.id_grade,
+    g.dia_semana,
     ds.nome             AS disciplina,
     ds.abreviacao       AS disciplina_abreviada,
     p.nome              AS professor,
-    g.sala              AS sala,
+    g.sala,
     g.cor_evento
-FROM grade_aulas g
-JOIN divisoes    dv ON dv.id_divisao      = g.id_divisao
-JOIN turmas      t  ON t.id_turma         = dv.id_turma
-JOIN cursos      c  ON c.id_curso         = t.id_curso
-JOIN horario_tipo ht 
-     ON ht.id_tipo_horario = c.id_tipo_horario
-    AND ht.posicao         = g.posicao_aula
-JOIN disciplinas ds ON ds.id_disciplina   = g.id_disciplina
-JOIN professores p  ON p.id_professor     = g.id_professor
+FROM turmas t
+  JOIN cursos c
+    ON c.id_curso = t.id_curso
+  JOIN divisoes dv
+    ON dv.id_turma = t.id_turma
+
+  -- pega todas as posições do modelo de horário do curso
+  JOIN horario_tipo ht
+    ON ht.id_tipo_horario = c.id_tipo_horario
+
+  -- só “puxa” grade_aulas quando existir; caso contrário, retorna NULL
+  LEFT JOIN grade_aulas g
+    ON g.id_divisao   = dv.id_divisao
+   AND g.posicao_aula = ht.posicao
+   AND g.id_turma     = t.id_turma  -- opcional, se você quiser reforçar o filtro
+
+  -- disciplinas e professores também em LEFT JOIN, para não “queimar” linhas vazias
+  LEFT JOIN disciplinas ds
+    ON ds.id_disciplina = g.id_disciplina
+  LEFT JOIN professores p
+    ON p.id_professor   = g.id_professor
+
 WHERE t.id_turma = ?
-ORDER BY ht.posicao, dv.nome_divisao
+ORDER BY ht.posicao, dv.nome_divisao;
+
 ";
 
 $stmt = $mysqli->prepare($sql);

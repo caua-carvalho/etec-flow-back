@@ -45,7 +45,7 @@ $stmt->execute();
 $res = $stmt->get_result();
 $user = $res->fetch_assoc();
 
-if (!$user || $password == $user['password_hash']) {
+if (!$user || $password !== $user['password_hash']) {
   http_response_code(401);
   exit(json_encode(['error'=>'Credenciais inválidas']));
 }

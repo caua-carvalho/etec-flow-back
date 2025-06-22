@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-require __DIR__ . '../../config/conn.php';
+require_once __DIR__ . '/../../config/conn.php';
 
 // lê JSON do body
 $input = json_decode(file_get_contents('php://input'), true);

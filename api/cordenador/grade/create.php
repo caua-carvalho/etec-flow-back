@@ -1,7 +1,7 @@
 <?php
 // api/cordenador/grade_create.php
 header('Content-Type: application/json; charset=utf-8');
-require_once __DIR__ . '/../../config/conn.php';
+require_once __DIR__ . '/../../../config/conn.php';
 
 $turma_id     = (int)($_POST['turma_id']     ?? 0);
 $dia_semana   = (int)($_POST['dia_semana']   ?? 0);

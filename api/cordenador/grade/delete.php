@@ -1,7 +1,7 @@
 <?php
 // api/cordenador/grade_delete.php
 header('Content-Type: application/json; charset=utf-8');
-require_once __DIR__ . '/../../config/conn.php';
+require_once __DIR__ . '/../../../config/conn.php';
 
 $id_grade = (int)($_POST['id_grade']??0);
 if (!$id_grade) {

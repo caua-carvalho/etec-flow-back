@@ -1,11 +1,13 @@
 <?php
+// api/cordenador/grade/divisoes_turma.php
 header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/../../../config/conn.php';
 
 $turma_id = isset($_GET['turma_id']) ? (int)$_GET['turma_id'] : 0;
 if (!$turma_id) {
   http_response_code(400);
-  exit(json_encode(['error'=>'Parâmetro turma_id faltando'], JSON_UNESCAPED_UNICODE));
+  echo json_encode(['error'=>'Faltando parâmetro turma_id'], JSON_UNESCAPED_UNICODE);
+  exit;
 }
 
 $sql = "

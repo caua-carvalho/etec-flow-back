@@ -6,32 +6,32 @@ require_once __DIR__ . '/../../../config/conn.php';
 $turma_id = isset($_GET['turma_id']) ? (int)$_GET['turma_id'] : 0;
 if (!$turma_id) {
   http_response_code(400);
-  exit(json_encode(['error'=>'Faltando parâmetro turma_id'], JSON_UNESCAPED_UNICODE));
+  echo json_encode(['error'=>'Faltando parâmetro turma_id'], JSON_UNESCAPED_UNICODE);
+  exit;
 }
 
 // pega id_curso da turma
-$sql = "SELECT id_curso FROM turmas WHERE id_turma = ?";
+$sql = "SELECT id_curso FROM turmas WHERE id_turma = ? LIMIT 1";
 $stmt= $mysqli->prepare($sql);
-$stmt->bind_param('i',$turma_id);
+$stmt->bind_param('i', $turma_id);
 $stmt->execute();
 $res = $stmt->get_result();
 if (!$row = $res->fetch_assoc()) {
   http_response_code(404);
-  exit(json_encode(['error'=>'Turma não encontrada'], JSON_UNESCAPED_UNICODE));
+  echo json_encode(['error'=>'Turma não encontrada'], JSON_UNESCAPED_UNICODE);
+  exit;
 }
-$curso = (int)$row['id_curso'];
+$id_curso = (int)$row['id_curso'];
 
 // lista disciplinas do curso
 $sql = "
-  SELECT
-    id_disciplina AS id,
-    nome          AS nome
-  FROM disciplinas
-  WHERE id_curso = ?
-  ORDER BY nome
+  SELECT id_disciplina AS id, nome
+    FROM disciplinas
+   WHERE id_curso = ?
+   ORDER BY nome
 ";
 $stmt = $mysqli->prepare($sql);
-$stmt->bind_param('i',$curso);
+$stmt->bind_param('i', $id_curso);
 $stmt->execute();
 $res = $stmt->get_result();
 

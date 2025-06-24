@@ -49,7 +49,7 @@ $stmt = $mysqli->prepare("
   VALUES (?,?,?,?,?,?,?,?)
 ");
 $stmt->bind_param(
-  'iiiissis',
+  'iiiiisis',
   $turma_id,
   $id_div,
   $posicao,

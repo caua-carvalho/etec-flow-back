@@ -23,7 +23,7 @@ $sql = "
 ";
 $stmt = $mysqli->prepare($sql);
 $stmt->bind_param('i', $curso_id);
-stmt->execute();
+$stmt->execute();
 $result = $stmt->get_result();
 
 $turmas = [];

@@ -1,7 +1,7 @@
 <?php
 // api/cordenador/grade_por_turma.php
 header('Content-Type: application/json; charset=utf-8');
-require_once __DIR__ . '/../../config/conn.php';
+require_once __DIR__ . '/../../../config/conn.php';
 
 $turma_id = isset($_GET['turma_id']) ? (int)$_GET['turma_id'] : 0;
 if (!$turma_id) {

@@ -42,10 +42,25 @@ $stmt->bind_param(
   $cor_evento
 );
 
-if (!$stmt->execute()) {
-  http_response_code(500);
-  exit(json_encode(['error'=>$stmt->error], JSON_UNESCAPED_UNICODE));
+try {
+  $stmt->execute();
+  // sucesso
+  echo json_encode([
+    'success'  => true,
+    'id_grade' => $stmt->insert_id
+  ], JSON_UNESCAPED_UNICODE);
+} catch (mysqli_sql_exception $e) {
+  // erro de duplicidade de divisão+posição
+  if ($mysqli->errno === 1062) {
+    http_response_code(400);
+    echo json_encode([
+      'error' => 'Já existe uma aula cadastrada nessa divisão e horário'
+    ], JSON_UNESCAPED_UNICODE);
+  } else {
+    http_response_code(500);
+    echo json_encode([
+      'error' => 'Erro no banco: ' . $e->getMessage()
+    ], JSON_UNESCAPED_UNICODE);
+  }
 }
-
-echo json_encode(['success'=>true,'id_grade'=>$stmt->insert_id], JSON_UNESCAPED_UNICODE);
 exit;

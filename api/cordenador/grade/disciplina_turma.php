@@ -28,7 +28,7 @@ $sql = "
   SELECT
     id_disciplina AS id,
     nome,
-    cor_evento    AS cor
+    cor_evento
     FROM disciplinas
    WHERE id_curso = ?
    ORDER BY nome

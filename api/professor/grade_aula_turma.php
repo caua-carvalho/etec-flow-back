@@ -18,6 +18,7 @@ SELECT
     ht.posicao         AS indice,
     ht.horario_inicio,
     ht.horario_fim,
+    ht.is_intervalo,
     t.id_turma,
     t.codigo           AS turma,
     dv.id_divisao,

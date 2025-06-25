@@ -29,13 +29,31 @@ if ($missing) {
   exit;
 }
 
-// prepara INSERT (7 colunas: turma,divisao,posicao,disciplina,professor,sala,dia_semana)
+// verifica se o professor já tem aula nesse dia/horário
+$chk = $mysqli->prepare("
+  SELECT 1
+    FROM grade_aulas
+   WHERE id_professor = ?
+     AND dia_semana   = ?
+     AND posicao_aula = ?
+   LIMIT 1
+");
+$chk->bind_param('iii', $id_professor, $dia_semana, $posicao);
+$chk->execute();
+if ($chk->get_result()->fetch_assoc()) {
+  http_response_code(400);
+  echo json_encode([
+    'error' => 'Professor já possui aula nesse dia e horário'
+  ], JSON_UNESCAPED_UNICODE);
+  exit;
+}
+
+// prepara INSERT (7 colunas: turma, divisao, posicao, disciplina, professor, sala, dia_semana)
 $stmt = $mysqli->prepare("
   INSERT INTO grade_aulas
     (id_turma, id_divisao, posicao_aula, id_disciplina, id_professor, sala, dia_semana)
   VALUES (?,?,?,?,?,?,?)
 ");
-// tipos: i,i,i,i,i,s,i
 $stmt->bind_param(
   'iiiiisi',
   $turma_id,
@@ -53,8 +71,9 @@ try {
     'success'  => true,
     'id_grade' => $stmt->insert_id
   ], JSON_UNESCAPED_UNICODE);
+
 } catch (mysqli_sql_exception $e) {
-  // tratamos duplicidade na chave única uc_grade_divisao_posicao
+  // trata duplicidade na chave única uc_grade_divisao_posicao
   if ($mysqli->errno === 1062) {
     http_response_code(400);
     echo json_encode([

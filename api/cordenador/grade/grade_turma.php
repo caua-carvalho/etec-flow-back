@@ -27,7 +27,7 @@ SELECT
   g.id_disciplina,
   ds.abreviacao         AS disciplina_abreviada,
   g.sala,
-  g.cor_evento,
+  ds.cor_evento,
   g.id_professor,
   p.nome                AS professor,
   dv.nome_divisao       AS divisao

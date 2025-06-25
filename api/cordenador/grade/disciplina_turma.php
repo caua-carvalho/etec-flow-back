@@ -25,7 +25,10 @@ $id_curso = (int)$row['id_curso'];
 
 // lista disciplinas do curso
 $sql = "
-  SELECT id_disciplina AS id, nome
+  SELECT
+    id_disciplina AS id,
+    nome,
+    cor_evento    AS cor
     FROM disciplinas
    WHERE id_curso = ?
    ORDER BY nome

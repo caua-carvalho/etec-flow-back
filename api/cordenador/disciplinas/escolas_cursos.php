@@ -1,6 +1,7 @@
 <?php
 // api/cordenador/disciplinas/escolas_cursos.php
 header('Content-Type: application/json; charset=utf-8');
+require_once __DIR__ . '/../../config/conn.php';
 
 // 1) Validação do parâmetro
 if (!isset($_GET['coordenador_id'])) {
@@ -10,22 +11,8 @@ if (!isset($_GET['coordenador_id'])) {
 }
 $coordenador_id = intval($_GET['coordenador_id']);
 
-// 2) Conexão ao banco (ajuste com suas credenciais ou include)
-$host = 'sql113.infinityfree.com';
-$user = 'if0_39241532';
-$pass = 'sua_senha';
-$db   = 'if0_39241532_etec_flow';
-
-$conn = new mysqli($host, $user, $pass, $db);
-if ($conn->connect_error) {
-    http_response_code(500);
-    echo json_encode(['error' => 'Falha na conexão: ' . $conn->connect_error]);
-    exit;
-}
-$conn->set_charset('utf8mb4');
-
 // 3) Query: traz escolas e cursos associados ao coordenador
-$sql = <<<SQL
+$sql = "
 SELECT
   e.id_escola,
   e.nome         AS nome_escola,
@@ -38,7 +25,7 @@ INNER JOIN coordenador_cursos cc
   ON cc.id_curso = c.id_curso
 WHERE cc.id_coordenador = ?
 ORDER BY e.nome, c.nome;
-SQL;
+";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('i', $coordenador_id);

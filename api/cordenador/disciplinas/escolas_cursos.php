@@ -1,41 +1,56 @@
 <?php
-// api/cordenador/disciplinas/escolas_cursos.php
+// api/coordinator/courses_grouped.php
 header('Content-Type: application/json; charset=utf-8');
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 require_once __DIR__ . '/../../../config/conn.php';
 
-// 1) Validação do parâmetro`
-if (!isset($_GET['coordenador_id'])) {
+$coordenador_id = isset($_GET['coordenador_id'])
+    ? (int) $_GET['coordenador_id']
+    : 0;
+
+if (!$coordenador_id) {
     http_response_code(400);
-    echo json_encode(['error' => 'Parâmetro coordenador_id é obrigatório']);
+    echo json_encode(
+        ['error' => 'Faltando parâmetro: coordenador_id'],
+        JSON_UNESCAPED_UNICODE
+    );
     exit;
 }
-$coordenador_id = intval($_GET['coordenador_id']);
 
-// 3) Query: traz escolas e cursos associados ao coordenador
 $sql = "
-SELECT
-  e.id_escola,
-  e.nome         AS nome_escola,
-  c.id_curso,
-  c.nome         AS nome_curso
-FROM escolas e
-INNER JOIN cursos c
-  ON c.id_escola = e.id_escola
-INNER JOIN coordenador_cursos cc
-  ON cc.id_curso = c.id_curso
-WHERE cc.id_coordenador = ?
-ORDER BY e.nome, c.nome;
+    SELECT
+      e.id_escola,
+      e.nome       AS nome_escola,
+      c.id_curso,
+      c.nome       AS nome_curso
+    FROM escolas e
+    JOIN cursos c
+      ON c.id_escola = e.id_escola
+    JOIN coordenador_cursos cc
+      ON cc.id_curso = c.id_curso
+     WHERE cc.id_coordenador = ?
+  ORDER BY e.nome, c.nome
 ";
 
-$stmt = $conn->prepare($sql);
+if (! $stmt = $mysqli->prepare($sql)) {
+    http_response_code(500);
+    echo json_encode(
+        ['error' => 'Erro no banco de dados: ' . $mysqli->error],
+        JSON_UNESCAPED_UNICODE
+    );
+    exit;
+}
+
 $stmt->bind_param('i', $coordenador_id);
 $stmt->execute();
 $result = $stmt->get_result();
+$rows   = $result->fetch_all(MYSQLI_ASSOC);
 
-// 4) Monta agrupamento por escola
 $grouped = [];
-while ($row = $result->fetch_assoc()) {
-    $id = $row['id_escola'];
+foreach ($rows as $row) {
+    $id = (int)$row['id_escola'];
     if (!isset($grouped[$id])) {
         $grouped[$id] = [
             'id_escola'   => $id,
@@ -44,12 +59,10 @@ while ($row = $result->fetch_assoc()) {
         ];
     }
     $grouped[$id]['cursos'][] = [
-        'id_curso' => $row['id_curso'],
+        'id_curso' => (int)$row['id_curso'],
         'nome'     => $row['nome_curso']
     ];
 }
-$stmt->close();
-$conn->close();
 
-// 5) Retorna array reindexado
+// devolve um array indexado numericamente
 echo json_encode(array_values($grouped), JSON_UNESCAPED_UNICODE);

@@ -29,7 +29,7 @@ SELECT
     ds.abreviacao       AS disciplina_abreviada,
     p.nome              AS professor,
     g.sala,
-    g.cor_evento
+    ds.cor_evento
 FROM turmas t
   JOIN cursos c
     ON c.id_curso = t.id_curso

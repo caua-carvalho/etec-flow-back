@@ -1,5 +1,5 @@
 <?php
-// grade_aulas_turma.php
+// grade_aulas_turma.php api do professor
 header('Content-Type: application/json; charset=UTF-8');
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
@@ -25,6 +25,7 @@ SELECT
     g.id_grade,
     g.dia_semana,
     ds.nome             AS disciplina,
+    ds.id_disciplina
     ds.abreviacao       AS disciplina_abreviada,
     p.nome              AS professor,
     g.sala,

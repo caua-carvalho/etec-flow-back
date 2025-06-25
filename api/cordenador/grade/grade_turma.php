@@ -1,5 +1,5 @@
 <?php
-// api/cordenador/grade/grade_turma.php
+// /cordenador/grade/grade_turma.php
 header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/../../../config/conn.php';
 

@@ -25,7 +25,7 @@ SELECT
     g.id_grade,
     g.dia_semana,
     ds.nome             AS disciplina,
-    ds.id_disciplina
+    ds.id_disciplina    AS id_disciplina,
     ds.abreviacao       AS disciplina_abreviada,
     p.nome              AS professor,
     g.sala,

@@ -4,7 +4,7 @@ header('Content-Type: application/json; charset=utf-8');
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-require_once __DIR__ . '/../../../config/conn.php';
+require_once __DIR__ . '/../../config/conn.php';
 
 $coordenador_id = isset($_GET['coordenador_id'])
     ? (int) $_GET['coordenador_id']

@@ -1,9 +1,9 @@
 <?php
 // api/cordenador/disciplinas/escolas_cursos.php
 header('Content-Type: application/json; charset=utf-8');
-require_once __DIR__ . '/../../config/conn.php';
+require_once __DIR__ . '/../../../config/conn.php';
 
-// 1) Validação do parâmetro
+// 1) Validação do parâmetro`
 if (!isset($_GET['coordenador_id'])) {
     http_response_code(400);
     echo json_encode(['error' => 'Parâmetro coordenador_id é obrigatório']);
